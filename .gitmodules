@@ -1,0 +1,9 @@
+[submodule "projects/dwm"]
+	path = projects/dwm
+	url = http://git.suckless.org/dwm
+[submodule "projects/dmenu"]
+	path = projects/dmenu
+	url = http://git.suckless.org/dmenu
+[submodule "projects/wmname"]
+	path = projects/wmname
+	url = http://git.suckless.org/wmname
