@@ -24,7 +24,7 @@ clean-%:
 	cd projects/$*; git checkout .
 	make -C projects/$* clean || true
 	rm -f projects/$*/config.h projects/$*/config.mk
-	find projects/$* -print0 | xargs -0 touch
+	find configs/$* -print0 | xargs -0 touch
 
 install: $(INSTALL_TARGETS)
 clean:   $(CLEAN_TARGETS)
