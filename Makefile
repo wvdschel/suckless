@@ -3,7 +3,7 @@ PROJECTS  = $(subst projects/,,$(wildcard projects/*))
 INSTALL_TARGETS = $(addprefix install-,$(PROJECTS))
 CLEAN_TARGETS = $(addprefix clean-,$(PROJECTS))
 
-default: $(addprefix bin/,$(PROJECTS))
+default: clean $(addprefix bin/,$(PROJECTS))
 
 projects/%: configs/%.$(PLATFORM)
 	cp $< $@
