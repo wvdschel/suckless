@@ -13,7 +13,7 @@ projects/%: configs/%
 
 bin/%: projects/%/config.mk projects/%/config.h
 	mkdir -p bin
-	cd projects/$(@F) ; ! [ -f  ../../patches/$(@F)/*.patch ] || for i in ../../patches/$(@F)/*.patch; do patch -p1 < $$i; done
+	cd projects/$(@F) ; ! [ -f  ../../patches/$(@F)/*.patch ] || for i in ../../patches/$(@F)/*.patch; do echo == $$i; patch -p1 < $$i; done
 	make -C projects/$(@F)
 	cp projects/$(@F)/$(@F) bin/
 
@@ -21,9 +21,8 @@ install-%: bin/% projects/%/config.mk
 	make -C projects/$(<F) install
 
 clean-%:
-	cd projects/$*; git checkout .
+	cd projects/$*; git clean -f; git checkout .
 	make -C projects/$* clean || true
-	rm -f projects/$*/config.h projects/$*/config.mk
 	find configs/$* -print0 | xargs -0 touch
 
 install: $(INSTALL_TARGETS)
