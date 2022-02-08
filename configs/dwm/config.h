@@ -68,10 +68,12 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_green, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "terminator", "-u", NULL };
 static const char *webcmd[]  = { "firefox", NULL };
-static const char *sshotcmd[]  = { "f3", "github", "screenshot"};
+static const char *sshotcmd[]  = { "f3", "github", "screenshot" };
+static const char *mutecmd[] = { "pactl", "set-source-mute", "input", "toggle" };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
+	{ 0,                            XK_XF86Phone, spawn,       {.v = mutecmd } },
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ControlMask,           XK_Return, spawn,          {.v = webcmd } },
