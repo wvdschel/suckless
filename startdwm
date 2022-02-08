@@ -1,9 +1,23 @@
-if (sleep 5); then
-	xsetroot -solid "#005577"
+if (sleep 3); then
+	dunst
 	ulimit -c unlimited
+	xsetroot -solid "#005577"
+	if [ -f ~/.wallpaper.png ]; then
+		hsetroot -tile ~/.wallpaper.png
+	else
+		hsetroot -solid "#005577" 
+	fi
 	wmname LG3D
-	xrandr
 fi &
+#xrandr --output DP-2 --scale 1x1 --mode 3840x2160 --fb 7680x2016 --pos 0x0         
+#xrandr --output DP-0 --scale 1x1 --mode 3840x2160 --pos 3840x0
+
+barrier &
+compton &
+1password &
+slack &
+footpedal &
+
 dwm
 
 
