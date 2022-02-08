@@ -73,7 +73,7 @@ static const char *mutecmd[] = { "pactl", "set-source-mute", "input", "toggle" }
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ 0,                            XK_XF86Phone, spawn,       {.v = mutecmd } },
+	{ 0,                            XK_F15,    spawn,          {.v = mutecmd } },
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ControlMask,           XK_Return, spawn,          {.v = webcmd } },
