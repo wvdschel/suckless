@@ -2,6 +2,7 @@ PLATFORM = $(shell uname)
 PROJECTS  = $(subst projects/,,$(wildcard projects/*))
 INSTALL_TARGETS = $(addprefix install-,$(PROJECTS))
 CLEAN_TARGETS = $(addprefix clean-,$(PROJECTS))
+PREFIX=/opt/stow/suckless
 
 default: clean $(addprefix bin/,$(PROJECTS))
 
@@ -19,6 +20,7 @@ bin/%: projects/%/config.mk projects/%/config.h
 
 install-%: bin/% projects/%/config.mk
 	make -C projects/$(<F) install
+	cp startdwm $(PREFIX)/bin/startdwm
 
 clean-%:
 	cd projects/$*; git clean -f; git checkout .
