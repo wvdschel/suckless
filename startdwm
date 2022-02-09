@@ -1,11 +1,11 @@
 if (sleep 3); then
-	dunst
 	ulimit -c unlimited
 	xsetroot -solid "#005577"
 	wmname LG3D
 
 	footpedal
 
+	dunst &
 	barrier &
 	compton &
 	1password &
