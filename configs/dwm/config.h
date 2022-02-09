@@ -69,7 +69,7 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *termcmd[]  = { "terminator", "-u", NULL };
 static const char *webcmd[]  = { "firefox", NULL };
 static const char *sshotcmd[]  = { "f3", "github", "screenshot" };
-static const char *mutecmd[] = { "pactl", "set-source-mute", "input", "toggle" };
+static const char *mutecmd[] = { "toggle-mute" };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
