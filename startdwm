@@ -24,6 +24,6 @@ fi &>> /tmp/dwm-startup.log &
 
 
 while true; do
-  dwm &>> /tmp/dwm.log
+  dwm 2>&1 >> /tmp/dwm.log
 done
 
