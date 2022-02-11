@@ -14,7 +14,7 @@ projects/%: configs/%
 
 bin/%: projects/%/config.mk projects/%/config.h
 	mkdir -p bin
-	cd projects/$(@F) ; ! [ -f  ../../patches/$(@F)/*.patch ] || for i in ../../patches/$(@F)/*.patch; do echo == $$i; patch -p1 < $$i; done
+	cd projects/$(@F) ; ! [ -d  ../../patches/$(@F) ] || for i in ../../patches/$(@F)/*.patch; do echo == $$i; patch -p1 < $$i; done
 	make -C projects/$(@F)
 	cp projects/$(@F)/$(@F) bin/
 
