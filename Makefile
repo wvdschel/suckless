@@ -12,7 +12,7 @@ projects/%: configs/%.$(PLATFORM)
 projects/%: configs/%
 	cp $< $@
 
-bin/%: projects/%/config.mk projects/%/config.h lib/libXft.a
+bin/%: projects/%/config.mk projects/%/config.h 
 	mkdir -p bin
 	cd projects/$(@F) ; ! [ -d  ../../patches/$(@F) ] || for i in ../../patches/$(@F)/*.patch; do echo == $$i; patch -p1 < $$i; done
 	make -C projects/$(@F)
@@ -22,6 +22,8 @@ install/%: bin/% projects/%/config.mk
 	make -C projects/$(<F) install
 	cp startdwm $(PREFIX)/bin/startdwm
 
+bin/dwm: install/libxft
+
 $(CLEAN_TARGETS):
 	cd projects/$(@F); git clean -f; git checkout .
 	make -C projects/$(@F) clean || true
@@ -29,16 +31,13 @@ $(CLEAN_TARGETS):
 
 install: $(INSTALL_TARGETS)
 clean:   $(CLEAN_TARGETS)
-	rm -rf bin/*
+	rm -rf bin/* lib/*
 
-.PHONY: install clean $(CLEAN_TARGETS) bin/libxft
+.PHONY: install clean $(CLEAN_TARGETS) bin/libxft 
 
-install/libxft: lib/libXft.a
+bin/libxft:
 
-bin/libxft: lib/libXft.a
-
-lib/libXft.a:
-	cd projects/libxft && ./autogen.sh && ./configure --disable-shared
-	make -C projects/libxft
-	mkdir -p lib
-	cp ./projects/libxft/src/.libs/libXft.a lib/libXft.a
+install/libxft:
+	cd projects/libxft ; ! [ -d  ../../patches/libxft ] || for i in ../../patches/libxft/*.patch; do echo == $$i; patch -p1 < $$i; done
+	cd projects/libxft && ./autogen.sh && ./configure --prefix=$(PREFIX)
+	make -C projects/libxft install
