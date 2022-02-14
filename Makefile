@@ -22,16 +22,16 @@ install/%: bin/% projects/%/config.mk
 	make -C projects/$(<F) install
 	cp startdwm $(PREFIX)/bin/startdwm
 
-clean/%:
-	cd projects/$*; git clean -f; git checkout .
-	make -C projects/$* clean || true
-	! [ -d configs/$* ] || find configs/$* -print0 | xargs -0 touch
+$(CLEAN_TARGETS):
+	cd projects/$(@F); git clean -f; git checkout .
+	make -C projects/$(@F) clean || true
+	! [ -d configs/$(@F) ] || find configs/$(@F) -print0 | xargs -0 touch
 
 install: $(INSTALL_TARGETS)
 clean:   $(CLEAN_TARGETS)
 	rm -rf bin/*
 
-.PHONY: install $(INSTALL_TARGETS) clean $(CLEAN_TARGETS) bin/libxft
+.PHONY: install clean $(CLEAN_TARGETS) bin/libxft
 
 install/libxft: lib/libXft.a
 
