@@ -7,3 +7,6 @@
 [submodule "projects/wmname"]
 	path = projects/wmname
 	url = http://git.suckless.org/wmname
+[submodule "projects/libxft"]
+	path = projects/libxft
+	url = https://gitlab.freedesktop.org/xorg/lib/libxft.git
