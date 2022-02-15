@@ -15,10 +15,79 @@ function colorcode {
 	fi
 }
 
+function verticalbar {
+	local VALUE=$1
+	local MAX=$2
+	local SEGMENT=$(expr 8 \* $VALUE / $MAX)
+	if [[ $SEGMENT -le 0 ]]; then
+		echo -en " "
+	elif [[ $SEGMENT -gt 8 ]]; then
+		echo -en "\xE2\x96\x92"
+	else
+		echo -en "\xE2\x96\x$(expr 80 + $SEGMENT)"
+	fi
+}
+
+function trimfile {
+	local FILENAME=$1
+	local MAXLINES=$2
+	local CONTENTS=$(tail -n$MAXLINES $FILENAME)
+	echo "$CONTENTS" > $FILENAME
+}
+
+function bargraph {
+	local LINE VALUE MAX
+	while read LINE; do
+		echo "$LINE" | {
+			read -d' ' VALUE
+			read -d' ' MAX
+			verticalbar $VALUE $MAX
+		}
+	done
+}
+
+function cpustats {
+	local LABEL TRASH USR NICE SYSTEM IDLE IOWAIT IRQ SOFTIRQ STEAL GUEST GUEST_NICE TOTAL NOTUSED USED
+	cat /proc/stat | head -n1 | {
+		for i in LABEL TRASH USR NICE SYSTEM IDLE IOWAIT IRQ SOFTIRQ STEAL GUEST GUEST_NICE; do
+			read -d' ' $i
+		done
+		TOTAL=$(expr $USR + $NICE + $SYSTEM + $IDLE + $IOWAIT + $IRQ + $SOFTIRQ + $STEAL + $GUEST + $GUEST_NICE)
+		NOTUSED=$(expr $IDLE + $IOWAIT)
+		USED=$(expr $TOTAL - $NOTUSED)
+		echo $USED $TOTAL >> /tmp/dwm_cpustats
+	}
+	trimfile /tmp/dwm_cpustats 9
+
+	local LINE VALUE MAX PREV_MAX PREV_VALUE
+	while read LINE; do
+		if (true); then
+			read -d' ' VALUE
+			read -d' ' MAX
+
+			if ! [ -z $PREV_VALUE ]; then
+				echo $(expr $VALUE - $PREV_VALUE) $(expr $MAX - $PREV_MAX)
+			fi
+
+			PREV_VALUE=$VALUE
+			PREV_MAX=$MAX
+		fi <<<"$LINE"
+	done < /tmp/dwm_cpustats | bargraph
+}
+
+function memstats {
+	local TOTALMEM=$(cat /proc/meminfo | grep MemTotal: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
+	local FREEMEM=$(cat /proc/meminfo | grep MemAvailable: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
+	local USEDMEM=$(expr $TOTALMEM - $FREEMEM)
+	echo $USEDMEM $TOTALMEM >> /tmp/dwm_memstats
+	trimfile /tmp/dwm_memstats 8
+	cat /tmp/dwm_memstats | bargraph
+}
+
 function statusbar {
 	# required security services:
 	if ! (systemctl status osqueryd ufw qualys-cloud-agent unattended-upgrades > /dev/null); then
-		echo -n "⚠️ SECURITY SERVICES FAILURE ⚠️   "
+		echo -n "\xE2\x9A\xA0 SECURITY SERVICES FAILURE \xE2\x9A\xA0    "
 	fi
 
 	echo -n "$(date +"%H:%M %d/%m") "
@@ -26,20 +95,18 @@ function statusbar {
 	local TOTALMEM=$(cat /proc/meminfo | grep MemTotal: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
 	local FREEMEM=$(cat /proc/meminfo | grep MemAvailable: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
 	local MEMLOAD=$(expr 100 - ${FREEMEM}00 / ${TOTALMEM})
-	echo -n "🖥️ "
+	echo -en "\xF0\x9F\x96\xA5 "
 	echo -n "M:"
-	colorcode ${MEMLOAD} 100
+	memstats
 
 	local CPUSHORT=$(cat /proc/loadavg | cut -d' ' -f1 | sed -r 's/[^0-9]//g')
 	local CPUMED=$(cat /proc/loadavg | cut -d' ' -f2 | sed -r 's/[^0-9]//g')
 	local CPULONG=$(cat /proc/loadavg | cut -d' ' -f3 | sed -r 's/[^0-9]//g')
 	echo -n " C:"
-	colorcode ${CPUSHORT} 1000
-	colorcode ${CPUMED} 1000
-	colorcode ${CPULONG} 1000
+	cpustats
 
 	if (pactl list sources | grep -q 'Mute: yes'); then
-		echo -n "🤫"
+		echo -en "\xF0\x9F\xA4\xAB"
 	fi
 }
 
