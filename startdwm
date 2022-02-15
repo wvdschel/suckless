@@ -5,6 +5,8 @@ if (sleep 3); then
 	xsetroot -solid "#005577"
 	wmname LG3D
 
+	footpedal
+
 	dunst &
 	barrier &
 	compton &
@@ -21,7 +23,7 @@ if (sleep 3); then
 fi &>> /tmp/dwm-startup.log &
 
 while true; do 
-	sleep 0.5
+	sleep 1
 	xsetroot -name "$(dwm_status)"
 done &
 
