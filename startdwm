@@ -5,8 +5,6 @@ if (sleep 3); then
 	xsetroot -solid "#005577"
 	wmname LG3D
 
-	footpedal
-
 	dunst &
 	barrier &
 	compton &
