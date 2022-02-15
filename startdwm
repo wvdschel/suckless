@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if (sleep 3); then
 	ulimit -c unlimited
 	xsetroot -solid "#005577"
@@ -19,6 +21,12 @@ if (sleep 3); then
 	fi
 
 fi &>> /tmp/dwm-startup.log &
+
+while true; do 
+	sleep 0.5
+	xsetroot -name "$(dwm_status)"
+done &
+
 #xrandr --output DP-2 --scale 1x1 --mode 3840x2160 --fb 7680x2016 --pos 0x0         
 #xrandr --output DP-0 --scale 1x1 --mode 3840x2160 --pos 3840x0
 

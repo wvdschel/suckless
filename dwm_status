@@ -1,0 +1,46 @@
+#!/bin/bash
+
+function colorcode {
+	local VALUE=$1
+	local MAX=$2
+	local PCT=$(expr 100 \* $VALUE / $MAX)
+	if [[ $PCT -gt 30 ]]; then
+		echo -n "🟨"
+	elif [[ $PCT -gt 50 ]]; then
+		echo -n "🟧"
+	elif [[ $PCT -gt 85 ]]; then
+		echo -n "🟥"
+	else
+		echo -n "🟩"
+	fi
+}
+
+function statusbar {
+	# required security services:
+	if ! (systemctl status osqueryd ufw qualys-cloud-agent unattended-upgrades > /dev/null); then
+		echo -n "⚠️ SECURITY SERVICES FAILURE ⚠️   "
+	fi
+
+	echo -n "$(date +"%H:%M %d/%m") "
+
+	local TOTALMEM=$(cat /proc/meminfo | grep MemTotal: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
+	local FREEMEM=$(cat /proc/meminfo | grep MemAvailable: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
+	local MEMLOAD=$(expr 100 - ${FREEMEM}00 / ${TOTALMEM})
+	echo -n "🖥️ "
+	echo -n "M:"
+	colorcode ${MEMLOAD} 100
+
+	local CPUSHORT=$(cat /proc/loadavg | cut -d' ' -f1 | sed -r 's/[^0-9]//g')
+	local CPUMED=$(cat /proc/loadavg | cut -d' ' -f2 | sed -r 's/[^0-9]//g')
+	local CPULONG=$(cat /proc/loadavg | cut -d' ' -f3 | sed -r 's/[^0-9]//g')
+	echo -n " C:"
+	colorcode ${CPUSHORT} 1000
+	colorcode ${CPUMED} 1000
+	colorcode ${CPULONG} 1000
+
+	if (pactl list sources | grep -q 'Mute: yes'); then
+		echo -n "🤫"
+	fi
+}
+
+statusbar

@@ -20,7 +20,7 @@ bin/%: projects/%/config.mk projects/%/config.h
 
 install/%: bin/% projects/%/config.mk
 	make -C projects/$(<F) install
-	cp startdwm $(PREFIX)/bin/startdwm
+	cp dwm_status startdwm $(PREFIX)/bin/
 
 bin/dwm: install/libxft
 
