@@ -36,13 +36,22 @@ function trimfile {
 }
 
 function bargraph {
+	local SAMPLES_PER_BAR=$1
 	local LINE VALUE MAX
-	while read LINE; do
-		echo "$LINE" | {
-			read -d' ' VALUE
-			read -d' ' MAX
-			verticalbar $VALUE $MAX
-		}
+	while true; do
+		for i in $(seq $SAMPLES_PER_BAR); do
+			read LINE 
+			{
+				local V
+				read -d' ' V || break
+				VALUE=$(expr $VALUE + $V)
+				read -d' ' V 
+				[[ -z $V ]] && break
+				MAX=$(expr $MAX + $V)
+			} <<<"$LINE"
+		done
+		[[ -z $VALUE ]] || [[ -z $MAX ]] ||verticalbar $VALUE $MAX
+		[[ -z $LINE ]] && break
 	done
 }
 
@@ -57,7 +66,7 @@ function cpustats {
 		USED=$(expr $TOTAL - $NOTUSED)
 		echo $USED $TOTAL >> /tmp/dwm_cpustats
 	}
-	trimfile /tmp/dwm_cpustats 9
+	trimfile /tmp/dwm_cpustats 15
 
 	local LINE VALUE MAX PREV_MAX PREV_VALUE
 	while read LINE; do
@@ -72,7 +81,7 @@ function cpustats {
 			PREV_VALUE=$VALUE
 			PREV_MAX=$MAX
 		fi <<<"$LINE"
-	done < /tmp/dwm_cpustats | bargraph
+	done < /tmp/dwm_cpustats | bargraph 3
 }
 
 function memstats {
@@ -80,8 +89,8 @@ function memstats {
 	local FREEMEM=$(cat /proc/meminfo | grep MemAvailable: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
 	local USEDMEM=$(expr $TOTALMEM - $FREEMEM)
 	echo $USEDMEM $TOTALMEM >> /tmp/dwm_memstats
-	trimfile /tmp/dwm_memstats 8
-	cat /tmp/dwm_memstats | bargraph
+	trimfile /tmp/dwm_memstats 15
+	cat /tmp/dwm_memstats | bargraph 3
 }
 
 function statusbar {
@@ -90,20 +99,15 @@ function statusbar {
 		echo -n "\xE2\x9A\xA0 SECURITY SERVICES FAILURE \xE2\x9A\xA0    "
 	fi
 
+	# Show hush emoji if microphone is muted
 	if (pactl list sources | grep -q 'Mute: yes'); then
-		echo -en "\xF0\x9F\xA4\xAB"
+		echo -en "\xF0\x9F\xA4\xAB "
 	fi
-	
-	local TOTALMEM=$(cat /proc/meminfo | grep MemTotal: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
-	local FREEMEM=$(cat /proc/meminfo | grep MemAvailable: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
-	local MEMLOAD=$(expr 100 - ${FREEMEM}00 / ${TOTALMEM})
+
+	# Computer load
 	echo -en "\xF0\x9F\x96\xA5 "
 	echo -n "M:"
 	memstats
-
-	local CPUSHORT=$(cat /proc/loadavg | cut -d' ' -f1 | sed -r 's/[^0-9]//g')
-	local CPUMED=$(cat /proc/loadavg | cut -d' ' -f2 | sed -r 's/[^0-9]//g')
-	local CPULONG=$(cat /proc/loadavg | cut -d' ' -f3 | sed -r 's/[^0-9]//g')
 	echo -n " C:"
 	cpustats
 
