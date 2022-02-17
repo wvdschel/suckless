@@ -90,6 +90,10 @@ function statusbar {
 		echo -n "\xE2\x9A\xA0 SECURITY SERVICES FAILURE \xE2\x9A\xA0    "
 	fi
 
+	if (pactl list sources | grep -q 'Mute: yes'); then
+		echo -en "\xF0\x9F\xA4\xAB"
+	fi
+	
 	local TOTALMEM=$(cat /proc/meminfo | grep MemTotal: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
 	local FREEMEM=$(cat /proc/meminfo | grep MemAvailable: | sed -r 's/[^0-9]+([0-9]+).*/\1/g')
 	local MEMLOAD=$(expr 100 - ${FREEMEM}00 / ${TOTALMEM})
@@ -104,10 +108,6 @@ function statusbar {
 	cpustats
 
 	echo -n " $(date +"%H:%M %d/%m") "
-
-	if (pactl list sources | grep -q 'Mute: yes'); then
-		echo -en "\xF0\x9F\xA4\xAB"
-	fi
 }
 
 statusbar
