@@ -8,6 +8,7 @@ if (sleep 3); then
 	footpedal
 
 	dunst &
+	xscreensaver &
 	barrier &
 	compton &
 	1password &
