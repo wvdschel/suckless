@@ -2,7 +2,7 @@ PLATFORM = $(shell uname)
 PROJECTS  = $(subst projects/,,$(wildcard projects/*))
 INSTALL_TARGETS = $(addprefix install/,$(PROJECTS))
 CLEAN_TARGETS = $(addprefix clean/,$(PROJECTS))
-PREFIX=/opt/stow/suckless
+export PREFIX ?= /opt/stow/suckless
 
 default: clean $(addprefix bin/,$(PROJECTS))
 
