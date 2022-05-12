@@ -2,7 +2,7 @@ PLATFORM = $(shell uname)
 PROJECTS  = $(subst projects/,,$(wildcard projects/*))
 INSTALL_TARGETS = $(addprefix install/,$(PROJECTS))
 CLEAN_TARGETS = $(addprefix clean/,$(PROJECTS))
-export PREFIX ?= /opt/stow/suckless
+PREFIX ?= /opt/stow/suckless
 
 default: clean $(addprefix bin/,$(PROJECTS))
 
@@ -19,7 +19,7 @@ bin/%: projects/%/config.mk projects/%/config.h
 	cp projects/$(@F)/$(@F) bin/
 
 install/%: bin/% projects/%/config.mk
-	make -C projects/$(<F) install
+	make -C projects/$(<F) install PREFIX=$(PREFIX)
 	cp dwm_status startdwm $(PREFIX)/bin/
 
 bin/dwm: install/libxft
