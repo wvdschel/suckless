@@ -4,19 +4,18 @@ INSTALL_TARGETS = $(addprefix install/,$(PROJECTS))
 CLEAN_TARGETS = $(addprefix clean/,$(PROJECTS))
 PREFIX ?= /opt/stow/suckless
 
-.PHONY: default install clean $(CLEAN_TARGETS) bin/libxft install/libxft projects/%
+.PHONY: default install clean $(CLEAN_TARGETS) bin/libxft install/libxft
 
 default: clean $(addprefix bin/,$(PROJECTS))
 
-projects/%: configs/%.$(PLATFORM)
-	cp $< $@
-
-projects/%: configs/%
-	cp $< $@
-
-bin/%: projects/%/config.mk projects/%/config.h 
+bin/%:
 	mkdir -p bin
 	cd projects/$(@F) ; ! [ -d  ../../patches/$(@F) ] || for i in ../../patches/$(@F)/*.patch; do echo == $$i; patch -p1 < $$i; done
+	cp configs/$*/config.mk projects/$*/ ||:
+	cp configs/$*/config.h projects/$*/ ||:
+	cp configs/$*/config.h projects/$*/ ||:
+	cp configs/$*/config.mk.$(PLATFORM) projects/$*/config.mk ||:
+	cp configs/$*/config.h.$(PLATFORM) projects/$*/config.h ||:
 	make -C projects/$(@F)
 	cp projects/$(@F)/$(@F) bin/
 
