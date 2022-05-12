@@ -4,6 +4,8 @@ INSTALL_TARGETS = $(addprefix install/,$(PROJECTS))
 CLEAN_TARGETS = $(addprefix clean/,$(PROJECTS))
 PREFIX ?= /opt/stow/suckless
 
+.PHONY: default install clean $(CLEAN_TARGETS) bin/libxft install/libxft projects/%
+
 default: clean $(addprefix bin/,$(PROJECTS))
 
 projects/%: configs/%.$(PLATFORM)
@@ -32,8 +34,6 @@ $(CLEAN_TARGETS):
 install: $(INSTALL_TARGETS)
 clean:   $(CLEAN_TARGETS)
 	rm -rf bin/* lib/*
-
-.PHONY: install clean $(CLEAN_TARGETS) bin/libxft 
 
 bin/libxft:
 
