@@ -94,11 +94,6 @@ function memstats {
 }
 
 function statusbar {
-	# required security services:
-	if ! (systemctl status osqueryd ufw qualys-cloud-agent unattended-upgrades > /dev/null); then
-		echo -n "\xE2\x9A\xA0 SECURITY SERVICES FAILURE \xE2\x9A\xA0    "
-	fi
-
 	# Show hush emoji if microphone is muted
 	if (pactl list sources | grep -q 'Mute: yes'); then
 		echo -en "\xF0\x9F\xA4\xAB "
